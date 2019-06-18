@@ -2,6 +2,7 @@ package com.muscy.encryption;
 
 import java.io.UnsupportedEncodingException;
 
+
 public interface Encryption {
     
     String CHARSET_UTF_8 = "UTF-8";
