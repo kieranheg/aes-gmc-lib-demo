@@ -3,7 +3,6 @@ package com.muscy.encryption;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.security.Provider;
 import java.security.SecureRandom;
@@ -23,8 +22,7 @@ import java.security.SecureRandom;
  * x = IV length as byte
  * y = IV bytes
  * z = content bytes (encrypted content, auth tag)
- *
-*/
+ */
 public class AesGcmEncryption implements Encryption {
     private static final String ALGORITHM = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
@@ -49,14 +47,10 @@ public class AesGcmEncryption implements Encryption {
     
     @Override
     public byte[] encrypt(final String key, final String dataToEncrypt) throws AuthenticatedEncryptionException {
-        try {
-            byte[] bytesToEncrypt = Encryption.convertStringToByteArray(dataToEncrypt);
-            byte[] keyAsBytes = Encryption.convertHexStringToByteArray(key);
-            byte[] encrypted = encrypt(keyAsBytes, bytesToEncrypt, null);
-            return encrypted;
-        } catch (UnsupportedEncodingException e) {
-            throw new AuthenticatedEncryptionException(e.getMessage());
-        }
+        byte[] bytesToEncrypt = Encryption.convertStringToByteArray(dataToEncrypt);
+        byte[] keyAsBytes = Encryption.convertHexStringToByteArray(key);
+        byte[] encrypted = encrypt(keyAsBytes, bytesToEncrypt, null);
+        return encrypted;
     }
     
     @Override

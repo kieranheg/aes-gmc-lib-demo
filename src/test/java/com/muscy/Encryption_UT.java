@@ -14,7 +14,7 @@ public class Encryption_UT {
     private Encryption aes = new AesGcmEncryption();
     
     @Test
-    public void testEncryption() throws Exception {
+    public void testEncryption() {
         byte[] encryptedData = aes.encrypt(ENCRYPTION_KEY, DATA_TO_ENCRYPT);
         byte[] decryptedData = aes.decrypt(ENCRYPTION_KEY, encryptedData);
         assertEquals(DATA_TO_ENCRYPT, Encryption.convertByteArrayToString(decryptedData));

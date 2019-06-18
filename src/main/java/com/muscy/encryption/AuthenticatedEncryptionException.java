@@ -7,7 +7,7 @@ package com.muscy.encryption;
  * @since 18.12.2017
  */
 
-public class AuthenticatedEncryptionException extends Exception {
+public class AuthenticatedEncryptionException extends RuntimeException {
 
     public AuthenticatedEncryptionException(String message) {
         super(message);

@@ -8,14 +8,23 @@ public interface Encryption {
     String CHARSET_UTF_8 = "UTF-8";
     
     byte[] encrypt(final String key, final String dataToEncrypt) throws AuthenticatedEncryptionException;
+    
     byte[] decrypt(final String key, final byte[] encryptedData) throws AuthenticatedEncryptionException;
     
-    static byte[] convertStringToByteArray(final String str) throws UnsupportedEncodingException {
-        return str.getBytes(CHARSET_UTF_8);
+    static byte[] convertStringToByteArray(final String str) {
+        try {
+            return str.getBytes(CHARSET_UTF_8);
+        } catch (UnsupportedEncodingException e) {
+            throw new AuthenticatedEncryptionException(e.getMessage());
+        }
     }
     
-    static String convertByteArrayToString(byte[] bytes) throws UnsupportedEncodingException {
-        return new String(bytes, CHARSET_UTF_8);
+    static String convertByteArrayToString(byte[] bytes) {
+        try {
+            return new String(bytes, CHARSET_UTF_8);
+        } catch (UnsupportedEncodingException e) {
+            throw new AuthenticatedEncryptionException(e.getMessage());
+        }
     }
     
     static byte[] convertHexStringToByteArray(String s) {
