@@ -15,7 +15,7 @@ public interface Encryption {
         try {
             return str.getBytes(CHARSET_UTF_8);
         } catch (UnsupportedEncodingException e) {
-            throw new AuthenticatedEncryptionException(e.getMessage());
+            throw new AuthenticatedEncryptionException("Could not convert String to byte[] -invalid charset", e);
         }
     }
     
@@ -23,7 +23,7 @@ public interface Encryption {
         try {
             return new String(bytes, CHARSET_UTF_8);
         } catch (UnsupportedEncodingException e) {
-            throw new AuthenticatedEncryptionException(e.getMessage());
+            throw new AuthenticatedEncryptionException("Could not convert byte[] to String -invalid charset", e);
         }
     }
     
