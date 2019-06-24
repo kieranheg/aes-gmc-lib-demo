@@ -8,8 +8,10 @@ public interface Encryption {
     String CHARSET_UTF_8 = "UTF-8";
     
     byte[] encrypt(final String key, final String dataToEncrypt) throws AuthenticatedEncryptionException;
-    
     byte[] decrypt(final String key, final byte[] encryptedData) throws AuthenticatedEncryptionException;
+    
+    String encryptToString(final String key, final String dataToEncrypt) throws AuthenticatedEncryptionException;
+    String decryptFromString(final String key, final String encryptedData) throws AuthenticatedEncryptionException;
     
     static byte[] convertStringToByteArray(final String str) {
         try {

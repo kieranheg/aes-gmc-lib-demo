@@ -14,9 +14,16 @@ public class Encryption_UT {
     private Encryption aes = new EncryptionImpl();
     
     @Test
-    public void testEncryption() {
+    public void testEncryptionWithByteArrays() {
         byte[] encryptedData = aes.encrypt(ENCRYPTION_KEY, DATA_TO_ENCRYPT);
         byte[] decryptedData = aes.decrypt(ENCRYPTION_KEY, encryptedData);
         assertEquals(DATA_TO_ENCRYPT, Encryption.convertByteArrayToString(decryptedData));
+    }
+    
+    @Test
+    public void testEncryptionWithStrings() {
+        String encryptedData = aes.encryptToString(ENCRYPTION_KEY, DATA_TO_ENCRYPT);
+        String decryptedData = aes.decryptFromString(ENCRYPTION_KEY, encryptedData);
+        assertEquals(DATA_TO_ENCRYPT, decryptedData);
     }
 }

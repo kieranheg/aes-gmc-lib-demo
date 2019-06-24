@@ -5,6 +5,7 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
  * Implements AES (Advanced Encryption Standard) with Galois/Counter Mode (GCM), which is a mode of
@@ -40,18 +41,30 @@ public class EncryptionImpl implements Encryption {
     public byte[] encrypt(final String key, final String dataToEncrypt) throws AuthenticatedEncryptionException {
         byte[] bytesToEncrypt = Encryption.convertStringToByteArray(dataToEncrypt);
         byte[] keyAsBytes = Encryption.convertHexStringToByteArray(key);
-        byte[] encrypted = encrypt(keyAsBytes, bytesToEncrypt, null);
-        return encrypted;
+        return encrypt(keyAsBytes, bytesToEncrypt);
+    }
+    
+    @Override
+    public String encryptToString(final String key, final String dataToEncrypt) throws AuthenticatedEncryptionException {
+        byte[] encrypted = encrypt(key, dataToEncrypt);
+        return Base64.getEncoder().encodeToString(encrypted);
     }
     
     @Override
     public byte[] decrypt(final String key, final byte[] encryptedData) throws AuthenticatedEncryptionException {
         byte[] keyAsBytes = Encryption.convertHexStringToByteArray(key);
-        byte[] decrypted = decrypt(keyAsBytes, encryptedData, null);
+        byte[] decrypted = decrypt(keyAsBytes, encryptedData);
         return decrypted;
     }
     
-    private byte[] encrypt(byte[] rawEncryptionKey, byte[] rawData, byte[] associatedData) throws AuthenticatedEncryptionException {
+    @Override
+    public String decryptFromString(final String key, final String encryptedData) throws AuthenticatedEncryptionException {
+        byte[] encryptedDataAsBytes = Base64.getDecoder().decode(encryptedData);
+        byte[] decrypted = decrypt(key, encryptedDataAsBytes);
+        return Encryption.convertByteArrayToString(decrypted);
+    }
+    
+    private byte[] encrypt(byte[] rawEncryptionKey, byte[] rawData) throws AuthenticatedEncryptionException {
         if (rawEncryptionKey.length < MIN_AES_KEY_LENGTH) {
             throw new IllegalArgumentException("key length must be longer than " + MIN_AES_KEY_LENGTH + " bytes");
         }
@@ -64,11 +77,6 @@ public class EncryptionImpl implements Encryption {
             
             final Cipher cipherEnc = Cipher.getInstance(ALGORITHM);
             cipherEnc.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(rawEncryptionKey, "AES"), new GCMParameterSpec(TAG_LENGTH_BIT, iv));
-            
-            if (associatedData != null) {
-                cipherEnc.updateAAD(associatedData);
-            }
-            
             encrypted = cipherEnc.doFinal(rawData);
             
             ByteBuffer byteBuffer = ByteBuffer.allocate(1 + iv.length + encrypted.length);
@@ -81,7 +89,7 @@ public class EncryptionImpl implements Encryption {
         }
     }
     
-    private byte[] decrypt(byte[] rawEncryptionKey, byte[] encryptedData, byte[] associatedData) throws AuthenticatedEncryptionException {
+    private byte[] decrypt(byte[] rawEncryptionKey, byte[] encryptedData) throws AuthenticatedEncryptionException {
         byte[] iv = null;
         byte[] encrypted = null;
         try {
@@ -95,9 +103,6 @@ public class EncryptionImpl implements Encryption {
             
             final Cipher cipherDec = Cipher.getInstance(ALGORITHM);
             cipherDec.init(Cipher.DECRYPT_MODE, new SecretKeySpec(rawEncryptionKey, "AES"), new GCMParameterSpec(TAG_LENGTH_BIT, iv));
-            if (associatedData != null) {
-                cipherDec.updateAAD(associatedData);
-            }
             return cipherDec.doFinal(encrypted);
         } catch (Exception e) {
             throw new AuthenticatedEncryptionException("could not decrypt", e);

@@ -16,7 +16,6 @@ task fatJar(type: Jar) {
         attributes 'Implementation-Title': 'AES/GCM Encryption Example',
                 'Implementation-Version': version
     }
-//    baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
